@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Transform Transitions</title>
+<style>
+
+body {
+  margin: 0;
+}
+
+rect {
+  fill: none;
+  stroke: #FFF;
+  stroke-width: .1px;
+}
+text{
+  fill: navy;
+  font-size: 20;
+}
+</style>
+<body>
+<script src="js/d3.min.js"></script>
+<script>
+
+var w = 700,
+    h = 700,
+    z = 100,
+    x = w / z,
+    y = h / z;
+
+var m = sp(7);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", w)
+    .attr("height", h)
+    .append("g")
+    .attr('transform', 'translate(' + 50 + ',' + 50 + ')')
+/*
+svg.selectAll("rect")
+    .data(d3.range(x * y))
+  .enter().append("rect")
+    .attr("transform", translate)
+    .attr("width", z)
+    .attr("height", z)
+    .style("fill", function(d) { return d3.hsl(d % x / x * 360, 1, Math.floor(d / x) / y); })
+    .on("mouseover", mouseover);
+
+*/
+
+svg.selectAll("text")
+   .data(d3.range(x*y))
+  .enter().append("text")
+   .attr("transform", translate)
+   .text(function(d){
+    return m[(d%x)][Math.floor(d/x)];
+  });
+
+function translate(d) {
+
+  return "translate(" + (d % x) * z + "," + Math.floor(d / x) * z + ")";
+}
+
+function sp(len){
+  var helix = [[],[],[],[],[],[],[],[]];
+  var min = 0;
+  var max = len - 1;
+  var row = 0;
+  var col = 0;
+  for(var i=0; i < len * len; i++) {
+    helix[row][col]=i+1;
+    if(row == min && col < max) {
+      col = col + 1;
+    }
+    else if(row < max && col == max) {
+      row = row + 1;
+    }
+    else if(row == max && col > min) {
+      col = col - 1;
+    }
+    else if(row > min && col == min) {
+      row = row - 1;
+    }
+    if(row - 1 == min && col == min){
+      min = min + 1;
+      max = max - 1;
+    }
+  }
+  return helix;
+};
+/*
+function mouseover(d) {
+  this.parentNode.appendChild(this);
+
+  d3.select(this)
+      .style("pointer-events", "none")
+    .transition()
+      .duration(750)
+      .attr("transform", "translate(480,480)scale(23)rotate(180)")
+    .transition()
+      .delay(1500)
+      .attr("transform", "translate(240,240)scale(0)")
+      .style("fill-opacity", 0)
+      .remove();
+}
+*/
+</script>
